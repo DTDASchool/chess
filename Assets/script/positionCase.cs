@@ -6,6 +6,7 @@ public class positionCase : MonoBehaviour
 {
     public GameObject currentCase;
     public bool isSelected;
+    public int typePiece;
     
     // Start is called before the first frame update
     void Start()
@@ -23,7 +24,12 @@ public class positionCase : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if(isSelected == false)
+        Selection();
+    }
+
+    public void Selection()
+    {
+        if (!isSelected)
         {
             currentCase.GetComponent<interactionCase>().isSelected(true);
             isSelected = true;

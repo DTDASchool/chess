@@ -11,12 +11,19 @@ public class interactionCase : MonoBehaviour
     public int currentC;
     public bool select;
     public bool actifs;
+    public GameObject pion;
+    public int ligne;
+    public int colonne;
+    public bool isEmpty;
     public List<GameObject> listCase;
 
     // Start is called before the first frame update
     void Start()
     {
         defineStartColor();
+        pion = GameObject.Find("pions");
+        actifs = false;
+        isEmpty = true;
     }
 
     public void defineStartColor()
@@ -63,13 +70,31 @@ public class interactionCase : MonoBehaviour
         {
             defineStartColor();
         }
+        actifs = status;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.transform.tag == "Case")
         {
-            listCase.Add(other.transform.gameObject);
+            if (other.transform.GetComponent<interactionCase>().ligne > ligne && other.transform.GetComponent<interactionCase>().isEmpty)
+            {
+                listCase.Add(other.transform.gameObject);
+            }
+        }
+        if(other.transform.tag =="Player")
+        {
+            isEmpty = false;
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        if (actifs)
+        {
+            pion.transform.position = transform.position;
+            pion.transform.Translate(new Vector3(0f, 0.1f, 0f));
+            pion.GetComponent<positionCase>().Selection();
         }
     }
 
