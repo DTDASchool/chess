@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class interactionCase : MonoBehaviour
 {
+    public GameObject _manager;
     public Material couleurB;
     public Material couleurN;
     public Material transparent;
@@ -20,8 +21,9 @@ public class interactionCase : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        _manager = GameObject.Find("manager");
+        
         defineStartColor();
-        pion = GameObject.Find("pions");
         actifs = false;
         isEmpty = true;
     }
@@ -40,13 +42,27 @@ public class interactionCase : MonoBehaviour
         }
     }
 
-    public void isSelected(bool status) {
+    public void isSelected(GameObject tempPion, bool status) {
+        pion = tempPion;
         if (status)
         {
             transform.GetComponent<MeshRenderer>().material = clique;
             foreach (GameObject tempCase in listCase)
             {
-                tempCase.GetComponent<interactionCase>().isActive(true);
+                if (_manager.GetComponent<manager>().currentPlayer == 0)
+                {
+                    if (ligne < tempCase.GetComponent<interactionCase>().ligne && tempCase.GetComponent<interactionCase>().isEmpty)
+                    {
+                        tempCase.GetComponent<interactionCase>().isActive(tempPion, true);
+                    }
+                }
+                else
+                {
+                    if (ligne > tempCase.GetComponent<interactionCase>().ligne && tempCase.GetComponent<interactionCase>().isEmpty)
+                    {
+                        tempCase.GetComponent<interactionCase>().isActive(tempPion, true);
+                    }
+                }
             }
         }
         else
@@ -54,17 +70,17 @@ public class interactionCase : MonoBehaviour
             defineStartColor();
             foreach (GameObject tempCase in listCase)
             {
-                tempCase.GetComponent<interactionCase>().isActive(false);
+                tempCase.GetComponent<interactionCase>().isActive(tempPion, false);
             }
         }
     }
 
-    public void isActive(bool status)
+    public void isActive(GameObject tempPion, bool status)
     {
+        pion = tempPion;
         if (status)
         {
             transform.GetComponent<MeshRenderer>().material = transparent;
-
         }
         else
         {
@@ -77,10 +93,7 @@ public class interactionCase : MonoBehaviour
     {
         if(other.transform.tag == "Case")
         {
-            if (other.transform.GetComponent<interactionCase>().ligne > ligne && other.transform.GetComponent<interactionCase>().isEmpty)
-            {
-                listCase.Add(other.transform.gameObject);
-            }
+            listCase.Add(other.transform.gameObject);
         }
         if(other.transform.tag =="Player")
         {
@@ -94,7 +107,8 @@ public class interactionCase : MonoBehaviour
         {
             pion.transform.position = transform.position;
             pion.transform.Translate(new Vector3(0f, 0.1f, 0f));
-            pion.GetComponent<positionCase>().Selection();
+            pion.GetComponent<pieceSelection>().Selection();
+            _manager.GetComponent<manager>().switchPlayer();
         }
     }
 
